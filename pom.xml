@@ -10,7 +10,7 @@
         <module>springboot-elastic-search</module>
         <module>common-api</module>
         <module>springboot-kafka</module>
-        <module>sensitive-words</module>
+        <module>springboot-sensitive-words</module>
     </modules>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
