@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: dev
+
+
+---
+
+server:
+  port: 8080
+  servlet:
+    context-path: /sensitive-words
+
+spring:
+  application:
+    name: sensitive-words
+  profiles: dev
+
+sensitive:
+  words:
+    dir: G:/sensitive-words
+
+---
+
+server:
+  port: 7999
+  servlet:
+    context-path: /sensitive-words
+
+spring:
+  application:
+
+
+    name: sensitive-words
+  profiles: prop
+
+
+sensitive:
+  words:
+    dir: /data/tw-sensitive-words
+
+logging:
+  config: classpath:logback-config-prop.xml

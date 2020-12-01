@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字符串类型敏感词检测</title>
+<!--    <link rel=icon href="favicon.ico">-->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <link href="./css/wordsList.css" rel="stylesheet">
+
+</head>
+
+<body>
+<h3><a href="./index.html" style = "text-decoration: none; color: rgba(92,86,121,0.99); font-weight: 550;">主页</a> >
+    <a href="./sensitiveList.html" style = "text-decoration: none; color:  rgba(92,86,121,0.99); font-weight: 550;">敏感词列表</a> >
+    <span>编辑敏感词</span></h3>
+<hr>
+<div class="sensitiveBody">
+
+    <div class="head" style="clear: both;margin-top: 50px">
+<!--        <h4>新增敏感词</h4>-->
+        <label>敏感词名：</label>
+        <input type="text" placeholder="敏感词">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button onclick="">新增</button>
+    </div>
+    <br />
+    <div class="content">
+
+        <div id="right_content">
+            <label>使用中</label>
+            <textarea placeholder="请输入需要检测的字符串......" id="checkValue">
+               地方单独发发
+                法法师的
+            </textarea>
+        </div>
+
+        <div id="button_check">
+            <a href="javascript:void(0)" onclick="" title="右移">右移>></a>
+            <br /> <br />
+            <a href="javascript:void(0)" onclick="" title="左移">左移<<</a>
+            <br /> <br />
+            <a href="javascript:void(0)" onclick="" title="删除">删除 X </a>
+            <br /> <br />
+            <a href="javascript:void(0)" onclick="" title="复位">重置</a>
+            <br /> <br />
+            <a href="javascript:void(0)" onclick="" title="提交修改">提交修改</a>
+        </div>
+
+        <div id="left_content">
+            <label>已弃用</label>
+            <textarea placeholder="检测结果......" id="checkResult" disabled></textarea>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

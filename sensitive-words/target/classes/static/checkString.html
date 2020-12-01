@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字符串类型敏感词检测</title>
+<!--    <link rel=icon href="favicon.ico">-->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <link href="./css/checkString.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <h3><a href="./index.html" style = "text-decoration: none; color:rgba(92,86,121,0.99); font-weight: 550;">主页</a> > <span>敏感词检测</span></h3>
+    <hr>
+    <div class="sensitiveBody">
+        
+        <div class="head" style="clear: both;">
+            <h4>请选择敏感词词库</h4>
+            <label>分类：</label>
+            <select id="scategory" onchange="changeSensitive()">
+                <option selected disabled>--请选择分类--</option>
+            </select>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>词库：</label>
+            <select id="svalue">
+                <option selected disabled>--请先选择分类--</option>
+            </select>
+        </div>
+        <br />
+        <div class="content">
+
+            <div id="right_content">
+                <label>请输入：</label>
+                <textarea placeholder="请输入需要检测的字符串......" id="checkValue"></textarea>
+                <div><span style="font-size: 13px;" id="resolveResult">检测字符：（个）、检测耗时：（毫秒）</span></div>
+            </div>
+
+            <div id="button_check">
+                <a href="javascript:void(0)" onclick="changeValue()" title="默认将敏感词替换为 _">替换检测 》》</a>
+                <br /> <br />
+                <a href="javascript:void(0)" onclick="chenckValue()" title="结果为是否含有敏感词">是否含有 》》</a>
+                <br /> <br />
+                <a href="javascript:void(0)" onclick="resolveValue()" title="分析敏感词数量和包含的敏感词">敏感词分析 》》</a>
+            </div>
+
+            <div id="left_content">
+                <label>结果：</label>
+                <textarea placeholder="检测结果......" id="checkResult" disabled></textarea>
+            </div>
+        </div>
+        
+
+
+    </div>
+
+</body>
+<script>
+    var categorys = []
+
+    function querySensitive() {
+        $.ajax({
+            type: 'POST',
+            url: '/sensitive-words/sensitive/list',
+            data: {
+                "type": "1"
+            },
+            success: function (data) {
+                if (data && data != undefined) {
+                    categorys = data.use
+                    var categoryContent = '<option selected disabled value="zz" >--请选择分类--</option>'
+                    for (let i = 0; i < categorys.length; i++) {
+                        categoryContent += '<option value="' + i + '">' + categorys[i].categoryName + '</option>'
+                    }
+
+                    document.getElementById('scategory').innerHTML = categoryContent
+                }
+            }, error: function () {
+                categorys = []
+            }
+        });
+    }
+
+    function changeSensitive() {
+
+        var sensitiveElemnts = categorys[document.getElementById('scategory').value].lists
+        var sensitiveContent = '';
+
+        for (let i = 0; i < sensitiveElemnts.length; i++) {
+            sensitiveContent += '<option value="' + sensitiveElemnts[i].name + '">' + sensitiveElemnts[i].name + '</option>'
+        }
+
+        document.getElementById('svalue').innerHTML = sensitiveContent
+    }
+
+    function changeValue() {
+
+        if(categorys == null || categorys.length<=0){
+            window.confirm('敏感词源获取失败')
+            return;
+        }
+       
+        if (document.getElementById('scategory').value == 'zz' || document.getElementById('svalue').value == undefined) {
+            window.confirm('请选择条件')
+            return;
+        }
+
+        if (document.getElementById('checkValue').value.length <= 0) {
+            window.confirm('请输入检测的字')
+            return;
+        }
+
+        document.getElementById('checkResult').innerHTML = '正在检测.......'
+
+        var resultData = {
+            pointString: document.getElementById('checkValue').value,
+            category: categorys[document.getElementById('scategory').value].categoryName,
+            sensitiveName: document.getElementById('svalue').value,
+            replace: '_'
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/sensitive-words/sensitive/checkString',
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify(resultData),
+            dataType: 'json',
+            success: function (result) {
+                if (result && result != undefined) {
+                    if (result.code == '201') {
+                        alert(result.msg)
+                        document.getElementById('resolveResult').innerHTML = '检测字符：（个）、检测耗时：（毫秒）' 
+                        document.getElementById('checkResult').innerHTML = '检测失败，请刷新浏览器或稍后再试'
+                    } else {
+                        document.getElementById('checkResult').innerHTML = result.data
+                        var valueLength = document.getElementById('checkValue').value ;
+                        valueLength = valueLength.replace(/\n|\r/gi,"");
+                        document.getElementById('resolveResult').innerHTML = '检测字符：'+valueLength.length+' （个）、检测耗时：'+
+                                                                                    result.cost+'（毫秒）' 
+                    }
+
+                }
+            },
+            error: function () {
+                document.getElementById('checkResult').innerHTML = '检测失败，请刷新浏览器或稍后再试'
+                document.getElementById('resolveResult').innerHTML = '检测字符：（个）、检测耗时：（毫秒）' 
+
+            }
+        });
+    }
+
+    function chenckValue() {
+        
+        if(categorys == null || categorys.length<=0){
+            window.confirm('敏感词源获取失败')
+            return;
+        }
+      
+        if (document.getElementById('scategory').value == 'zz' || document.getElementById('svalue').value == undefined) {
+            window.confirm('请选择条件')
+            return;
+        }
+
+        if (document.getElementById('checkValue').value.length <= 0) {
+            window.confirm('请输入检测的字')
+            return;
+        }
+
+        document.getElementById('checkResult').innerHTML = '正在检测.......'
+
+        var resultData = {
+            pointString: document.getElementById('checkValue').value,
+            category: categorys[document.getElementById('scategory').value].categoryName,
+            sensitiveName: document.getElementById('svalue').value,
+            replace: '_'
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/sensitive-words/sensitive/isExistString',
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify(resultData),
+            dataType: 'json',
+            success: function (result) {
+                if (result && result != undefined) {
+                    if (result.code == '201') {
+                        alert(result.msg)
+                        document.getElementById('resolveResult').innerHTML = '检测字符：（个）、检测耗时：（毫秒）' 
+                        document.getElementById('checkResult').innerHTML = '检测失败，请刷新浏览器或稍后再试'
+                    } else {
+                        let showContent = '敏感词检测结果：'
+                        if(result.data){
+                            showContent += '存在敏感词'
+                        }else{
+                            showContent += '不存在敏感词'
+                        }
+
+                        document.getElementById('checkResult').innerHTML = showContent
+
+                        var valueLength = document.getElementById('checkValue').value ;
+                        valueLength = valueLength.replace(/\n|\r/gi,"");
+                        document.getElementById('resolveResult').innerHTML = '检测字符：'+valueLength.length+' （个）、检测耗时：'+
+                                                                                    result.cost+'（毫秒）' 
+                    }
+
+                }
+            },
+            error: function () {
+                document.getElementById('checkResult').innerHTML = '检测失败，请刷新浏览器或稍后再试'
+                document.getElementById('resolveResult').innerHTML = '检测字符：（个）、检测耗时：（毫秒）' 
+            }
+        });
+    }
+
+    function resolveValue() {
+
+        if(categorys == null || categorys.length<=0){
+            window.confirm('敏感词源获取失败')
+            return;
+        }
+
+        if (document.getElementById('scategory').value == 'zz' || document.getElementById('svalue').value == undefined) {
+            window.confirm('请选择条件')
+            return;
+        }
+
+        if (document.getElementById('checkValue').value.length <= 0) {
+            window.confirm('请输入检测的字')
+            return;
+        }
+
+        document.getElementById('checkResult').innerHTML = '正在检测.......'
+
+        var resultData = {
+            pointString: document.getElementById('checkValue').value,
+            category: categorys[document.getElementById('scategory').value].categoryName,
+            sensitiveName: document.getElementById('svalue').value,
+            replace: '_'
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/sensitive-words/sensitive/resolveString',
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify(resultData),
+            dataType: 'json',
+            success: function (result) {
+                if (result && result != undefined) {
+                    if (result.code == '201') {
+                        alert(result.msg)
+                        document.getElementById('resolveResult').innerHTML = '检测字符：（个）、检测耗时：（毫秒）' 
+                        document.getElementById('checkResult').innerHTML = '检测失败，请刷新浏览器或稍后再试'
+                    } else {
+
+                        let showContent = '敏感词检测结果： \n'
+                        showContent += '&nbsp;涉及文章敏感词数量：'+result.total +'\n'
+                        showContent += '&nbsp;涉及词库敏感词数量：'+result.words.length +'\n'
+                        showContent += '&nbsp;涉及文章敏感词详情：\n'
+                        for(let i=0 ; i<result.words.length ; i++){
+                            showContent += '&nbsp;&nbsp;'+ (i+1) + '  '+result.words[i] + '\n'
+                        }
+                        document.getElementById('checkResult').innerHTML = showContent
+
+                        var valueLength = document.getElementById('checkValue').value ;
+                        valueLength = valueLength.replace(/\n|\r/gi,"");
+                        document.getElementById('resolveResult').innerHTML = '检测字符：'+valueLength.length+' （个）、检测耗时：'+
+                                                                                    result.cost+'（毫秒）' 
+                    }
+
+                }
+            },
+            error: function () {
+                document.getElementById('checkResult').innerHTML = '检测失败，请刷新浏览器或稍后再试'
+                document.getElementById('resolveResult').innerHTML = '检测字符：（个）、检测耗时：（毫秒）' 
+            }
+        });
+    }
+
+    querySensitive();
+
+
+</script>
+
+</html>

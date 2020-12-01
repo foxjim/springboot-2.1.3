@@ -1,0 +1,26 @@
+.sensitiveBody{
+    margin-right: 2%;
+    width: 90%;
+}
+
+.head{
+    margin-left: 2%;
+}
+
+#right_content,#left_content{
+    float: left;
+    margin-left: 2%;
+    width: 40%;
+}
+
+#button_check{
+    margin-top: 40px;
+    margin-left: 2%;
+    float: left;
+    width: 10%;
+}
+
+#right_content textarea ,#left_content textarea{
+    width: 100%;
+    min-height: 500px;
+}
