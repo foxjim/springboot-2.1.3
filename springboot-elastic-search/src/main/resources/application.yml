@@ -1,0 +1,21 @@
+spring:
+  profiles: dev
+
+---
+
+spring:
+  profiles:
+    active: dev
+  data:
+    elasticsearch:
+      cluster-name: elasticsearch
+      cluster-nodes: 47.115.31.75:9300
+      repositories:
+        enabled: true
+
+server:
+  port: 1400
+  servlet:
+    context-path: /elastic-search
+
+
