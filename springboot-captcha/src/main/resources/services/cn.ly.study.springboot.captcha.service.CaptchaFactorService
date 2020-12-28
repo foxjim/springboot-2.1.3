@@ -1,0 +1,3 @@
+cn.ly.study.springboot.captcha.service.impl.CaptchaServiceImpl
+cn.ly.study.springboot.captcha.service.impl.ClickCaptchaServiceImpl
+cn.ly.study.springboot.captcha.service.impl.SlideCaptchaServiceImpl

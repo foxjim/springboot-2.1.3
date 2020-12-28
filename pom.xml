@@ -11,6 +11,7 @@
         <module>common-api</module>
         <module>springboot-kafka</module>
         <module>springboot-sensitive-words</module>
+        <module>springboot-captcha</module>
     </modules>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
